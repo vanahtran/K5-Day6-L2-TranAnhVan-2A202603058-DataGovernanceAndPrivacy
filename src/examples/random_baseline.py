@@ -32,7 +32,24 @@ def _items(ctx: RunContext) -> tuple[pd.DataFrame, str]:
         return items.merge(imgs[["image_id", "path"]], on="image_id"), "item_id"
     if ctx.track == "t13":
         return pd.read_csv(d / "images.csv"), "image_id"
-    raise NotImplementedError(f"random_baseline example supports t01, t02, t11, t13 (not {ctx.track})")
+    if ctx.track == "t04":
+        import numpy as np
+        cam = pd.read_csv(d / "camera.csv")
+        imu = pd.read_csv(d / "imu.csv")
+        cam_t_ms = cam["t_cam_s"].values * 1000.0
+        imu_ts = imu["t_imu_ms"].values.astype(float)
+        idx = np.searchsorted(imu_ts, cam_t_ms)
+        idx = np.clip(idx, 0, len(imu_ts) - 1)
+        prev_idx = np.clip(idx - 1, 0, len(imu_ts) - 1)
+        diff1 = np.abs(imu_ts[idx] - cam_t_ms)
+        diff2 = np.abs(imu_ts[prev_idx] - cam_t_ms)
+        chosen = np.where(diff1 < diff2, idx, prev_idx)
+        min_diff = np.minimum(diff1, diff2)
+        tol_ms = float(ctx.param("tol_ms", 50.0))
+        paired_imu = np.where(min_diff > tol_ms, np.nan, imu_ts[chosen])
+        items = pd.DataFrame({"frame_id": cam["frame_id"], "imu_t_ms": paired_imu, "score": min_diff, "reason": "nearest_raw"})
+        return items, "frame_id"
+    raise NotImplementedError(f"random_baseline example supports t01, t02, t04, t11, t13 (not {ctx.track})")
 
 
 def run(ctx: RunContext) -> None:
@@ -52,6 +69,8 @@ def run(ctx: RunContext) -> None:
         out = ranked.head(k)[[id_col]].assign(rank=range(1, k + 1))
     elif ctx.track == "t02":
         out = ranked[["image_id", "score"]]
+    elif ctx.track == "t04":
+        out = ranked[["frame_id", "imu_t_ms"]]
     else:
         out = ranked[["item_id", "score"]]
     out.to_csv(ctx.out(spec.pred_file), index=False)

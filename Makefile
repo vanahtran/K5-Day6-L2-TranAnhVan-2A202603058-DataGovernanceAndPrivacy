@@ -1,6 +1,7 @@
 # Day06 Data Lab — common commands.  Usage: make <target> TRACK=t02
+PYTHON ?= python3.11
 PY ?= .venv/bin/python
-TRACK ?= t02
+TRACK ?= t04
 OUT ?= out
 PRED = $(shell $(PY) -c "from src.metrics.tracks import get_track;print(get_track('$(TRACK)').pred_file)")
 
@@ -10,7 +11,7 @@ help:
 	@echo "make setup | preflight | test | verify | baseline TRACK=t11 | run TRACK=t02 | eval-baseline | eval-poc | compare"
 
 setup:
-	python3 -m venv .venv && $(PY) -m pip install -q --upgrade pip && $(PY) -m pip install -q -r requirements.txt
+	$(PYTHON) -m venv .venv && $(PY) -m pip install -q --upgrade pip && $(PY) -m pip install -q -r requirements.txt
 
 preflight:
 	$(PY) -m tools.preflight

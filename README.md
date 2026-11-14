@@ -1,5 +1,11 @@
 # Day 06 · Data Lab · Field-to-Release PoC (AI20K · Data Track)
 
+> **Nhóm G07 · Challenge T04: Sensor Sync Guard**
+> - **Học viên:** Tran Anh Van (Lead / Sync Specialist)
+> - **Repo:** `https://github.com/vanahtran/K5-Day6-L2-TranAnhVan-2A202603058-DataGovernanceAndPrivacy`
+> - **Tag nộp bài:** `demo-180m` · `final-24h`
+
+
 Starter repo cho bài lab **Data Pipeline, Privacy & Production PoC**: 14 challenge (T01–T14), một contract chung.
 Repo cung cấp **dữ liệu offline + hạ tầng dùng chung + metric chuẩn + template báo cáo** để nhóm tập trung vào phần quan trọng:
 vấn đề, baseline, thuật toán, đánh giá trung thực, human-in-the-loop và quyết định GO/HOLD/REWORK.
